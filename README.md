@@ -159,3 +159,26 @@ if [[ 2 gt 3]]; then
 fi
 ```
 
+So back to our problem and...
+
+### parameter extension
+In bash something like this `WORD=car; echo "the plurar of $WORD is most likely $WORDs"` because the shell does not know the variable *WORDs*. So we need curly braces the define the variable `WORD=car; echo "the plurar of $WORD is most likely ${WORD}s"`. And with parameter expansion we can replace strings in the variable with the format `${parameter/pattern/string}`
+
+```bash
+#!/bin/bash
+
+for fa in *_a.fastq;
+do
+    fb=${fa/_a/_b}
+    #wc -l $f
+    linenumber1=$(wc -l $fa | cut -d ' ' -f1)
+    ((linenumber1 /= 4))
+    linenumber2=$(wc -l $fb | cut -d ' ' -f1)
+    ((linenumber2 /= 4))
+    if [[ "$linenumber1" -eq "$linenumber2" ]]; then
+        echo "The files $fa and $fb have the same number of entries: ${linenumber1}/${linenumber2}"
+    else
+        echo "ERROR: The files $fa and $fb have different number of entries: ${linenumber1}/${linenumber2}"  
+    fi
+done 
+```
