@@ -182,3 +182,67 @@ do
     fi
 done 
 ```
+
+## debbuging 
+`bash -x script.sh` and the trace of the script plus the value of each argument is printed to the terminal. Very easy to spot the errors. We can then add `set -x` before and `set +x` after the block of the code which will give us some hints of debbuding helps. 
+
+
+## find
+With *ls* we only list files that are in a directory, if we want to find files in a directory tree we can use find: `files=$(find . -type f -name '*_a.fastq')`.
+
+### Exercise - break the script
+How to find if a file dummy3_a.fastq as a conter 'b' part. If it doesn't exist abort script First we create a file by linking another of the files: `ln -s dummy1_a.fastq dummy3_a.fastq`
+
+```bash
+#!/bin/bash
+
+for fa in *_a.fastq;
+do
+    fb=${fa/_a/_b}
+    if [[ ! -e "$fb" ]]; then
+	echo "EXIT $fb does not exit"
+        exit
+    fi
+    
+    #wc -l $f
+    linenumber1=$(wc -l $fa | cut -d ' ' -f1)
+    ((linenumber1 /= 4))
+    linenumber2=$(wc -l $fb | cut -d ' ' -f1)
+    ((linenumber2 /= 4))
+    if [[ "$linenumber1" -eq "$linenumber2" ]]; then
+        echo "The files $fa and $fb have the same number of entries: ${linenumber1}/${linenumber2}"
+    else
+        echo "ERROR: The files $fa and $fb have different number of entries: ${linenumber1}/${linenumber2}"  
+    fi
+done 
+```
+
+### exercise - positional arguments
+Now we want to script to operate in any given directory regardless of where we are executing it. *$1* is the first argument, *$2* the second, etc. All arguments are stored in a variable *$@*. So the could call the script `./script.sh somefolder`
+
+```bash
+#!/bin/bash
+
+echo $1
+```
+
+## Functions
+Also use positional arguments:
+
+```bash
+function greeter {
+    echo "Hello $1" 
+}
+```
+
+and can be used for calulations:
+
+```bash
+function mul {
+    let res=$1*$2 
+}
+
+mul 3 3 
+echo $res
+```
+Note that res was never defined, that is, unlike R or python, bash functions do not require a return statement. 
