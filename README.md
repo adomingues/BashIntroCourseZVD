@@ -82,3 +82,80 @@ Now we can have fun changing directories with tab completion. Using `cd` without
 
 We can create a new test file with `echo "asdf" > dummy.txt`. If we want a hidden file just add a dot to the file name: `echo "asdf" > .dummy.txt`.
 
+ 
+ ## scripting
+ 
+ ## exercise 1 - loops
+ Go through all fastq files and calculate how many entries each one has. We will use `wc -l`, but keep in mind that each entry jas four lines in a fastq file. First let's loop over the files, so we edit the bash script, `script.sh`, to include the loop:
+ 
+ ```bash
+ #!/bin/bash
+
+for f in *.fastq;
+do
+    wc -l $f
+done
+```
+
+## exercise 2 
+How about if we only want to:
+- work with the files *_a* and *_b* 
+- that have the same number of lines.
+- We also want to know how many lines they have
+- but the result should be single number.
+- The result should be assigned to a variable.
+
+### pipes
+To get only the number of lines we can separate the result using the program `cut`. So we *pipe* the result of `wc -l` to cut. Using pipe, `|` we are sending the result of a program to another without printing the results. Example would be `wc -l dummy1_a.fastq | cut -d ' ' -f1`. Wiht cut we can separate a line into fields and select the ones we want. Limitations of pipes:
+- pipes are buffered, that is limited to memory
+- programs need to read/write from stdin/stdout
+- and each one needs the other to finish without errors
+
+### subshells
+To assign the number of lines to a variable we use the syntax `linenumber=$(wc -l dummy1_a.fastq | cut -d ' ' -f1)`. The `$()` will capture the output of the command instead of printing it to the terminal. Essentiallz we are running a subshell. We can see the result of *X* with `echo $linenumber`. surrounding the command with backticks will also work, `linenumber=$(wc -l dummy1_a.fastq | cut -d ' ' -f1)`, but it is deprecated. 
+
+### basic maths
+`a=5+4` is taken by bash as a string (`echo $a`). Using *let* we now get proper operations `let a=5+4; echo $a`. We can also use an evaluation method with *(())*, so `((a=(5+2)*3)); echo $a`. There other options, so let's look at our script:
+
+```bash
+for f in *.fastq;
+do
+    #wc -l $f
+    linenumber=$(wc -l $f | cut -d ' ' -f1)
+    ((linenumber /= 4)) # python style, calculates and updates the variable
+    result=$((linenumber / 4)) # another solution
+    echo "The file $f contains $linenumber entries (or $result)"
+done 
+```
+Or we can use *bc* as in `bc <<< "$(wc -l $f | cut -d ' ' -f1)/4"`, or awk.
+
+NOTE: in pure bash the output of an arithmetic operation is always an integer. So `((a=5/2)); echo $a` will *2* like in python.
+
+### logical tests
+```bash
+myname="antonio domingues"
+yourname="micha myers"
+
+# with 
+[ $myname = $yourname ]
+# evaluates 2 strings and gives an error. Needs quotes.
+[ "$myname" = "$yourname" ]
+```
+
+Now a prooper test:
+```bash
+myname="antonio domingues"
+yourname="micha myers"
+
+if [ "$myname" = "$yourname" ]; then
+    echo "we are the same person"
+else
+    echo "we are all individuals"
+fi
+
+# for numbers
+if [[ 2 gt 3]]; then
+    echo "such a large number"
+fi
+```
+
