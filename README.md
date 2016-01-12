@@ -246,3 +246,19 @@ mul 3 3
 echo $res
 ```
 Note that res was never defined, that is, unlike R or python, bash functions do not require a return statement. 
+
+## xargs
+Builds and executes commands from stdin. Or how to parallel: `find . -type f -name '*.hpp' | xargs -n1 -P4 grep -i "mpi.h"`. This will look for the string *mpi.h* in all *.hpp* files, and it will do it in parallel using 4 processes. We can put `time` before the command to check how long it does take.
+
+## arrays
+Come in two flavours, arrays and associative arrays.
+
+```bash
+ffiles=(*.fastq)
+echo ${ffiles[2]}
+echo ${ffiles[@]}
+```
+Associative arrays are like dictionaries in python.
+
+## output redirection
+`tee`. 
