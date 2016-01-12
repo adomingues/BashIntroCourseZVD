@@ -56,11 +56,11 @@ NOTE: `CTRL+c`, or copy from the terminal, does not seem to work on windows.
 - x, executable
 - `-` means no permission.
 
-`ls -l` also lists the number of blocks the listed files take up on disk. For human readable file size use `ls -lh`. Adding teh argument `a` will list hidden files. Every directory will list two folders:
+`ls -l` also lists the number of blocks the listed files take up on disk. For human readable file size use `ls -lh`. Adding the argument `a` will list hidden files. Every directory will list two folders:
 > .
 > ..
 
-One is the current directory the other the directory before.
+One is the current directory the other the directory up.
 
 ### Change permissions
 ```bash
